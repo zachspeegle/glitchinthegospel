@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Home -->
+  <url>
+    <loc>https://glitchinthegospel.com/</loc>
+    <lastmod>2025-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://glitchinthegospel.com/about.html</loc>
+    <lastmod>2025-04-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog -->
+  <url>
+    <loc>https://glitchinthegospel.com/blog.html</loc>
+    <lastmod>2025-04-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://glitchinthegospel.com/contact.html</loc>
+    <lastmod>2025-04-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!--
+    ═══════════════════════════════════════════════════════
+    BLOG POSTS — add a new <url> block for each post
+    you publish. Copy the template below and fill in:
+      <loc>      full URL to the post
+      <lastmod>  date published or last edited (YYYY-MM-DD)
+      <priority> 0.7 is a good default for blog posts
+
+    EXAMPLE:
+    <url>
+      <loc>https://glitchinthegospel.com/blog/wars-and-rumors.html</loc>
+      <lastmod>2025-04-16</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+    </url>
+    ═══════════════════════════════════════════════════════
+  -->
+
+</urlset>
