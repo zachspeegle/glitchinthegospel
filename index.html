@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GLITCH IN THE GOSPEL — Z.W. Speegle</title>
+  <meta name="description" content="The signal is real. The pattern is ancient. Something in the code is trying to wake you up. — Z.W. Speegle" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --black:      #020508;
+      --deep:       #060d14;
+      --panel:      #0a1520;
+      --border:     #0f2535;
+      --cyan:       #00e5ff;
+      --cyan-dim:   #00a8bf;
+      --magenta:    #d400ff;
+      --mag-dim:    #8b00a8;
+      --green:      #00ff88;
+      --red-glitch: #ff003c;
+      --text:       #c8dde8;
+      --text-dim:   #5a7a8a;
+      --text-muted: #2a4050;
+      --mono:       'Share Tech Mono', monospace;
+      --display:    'Orbitron', sans-serif;
+      --body:       'Rajdhani', sans-serif;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 18px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CUSTOM CURSOR ──────────────────────────────────── */
+    .cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s, background 0.2s;
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan);
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 28px; height: 28px;
+      border: 1px solid rgba(0,229,255,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease-out, border-color 0.2s;
+    }
+
+    /* ─── SCANLINE OVERLAY ───────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ─── NOISE TEXTURE ──────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.3;
+    }
+
+    /* ─── NAVIGATION ─────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      background: linear-gradient(180deg, rgba(2,5,8,0.98) 0%, rgba(2,5,8,0.0) 100%);
+      border-bottom: 1px solid rgba(0,229,255,0.08);
+    }
+
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: var(--cyan);
+      text-decoration: none;
+      text-transform: uppercase;
+      position: relative;
+    }
+    .nav-logo::before {
+      content: '[';
+      color: var(--text-dim);
+      margin-right: 4px;
+    }
+    .nav-logo::after {
+      content: ']';
+      color: var(--text-dim);
+      margin-left: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transition: transform 0.25s;
+      transform-origin: left;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding: 120px 48px 80px;
+    }
+
+    /* Animated grid background */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: grid-drift 20s linear infinite;
+    }
+    @keyframes grid-drift {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(60px); }
+    }
+
+    /* Deep atmosphere layers */
+    .hero-glow-1 {
+      position: absolute;
+      top: -20%;
+      left: -10%;
+      width: 60%;
+      height: 70%;
+      background: radial-gradient(ellipse, rgba(0,229,255,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-glow-2 {
+      position: absolute;
+      bottom: -20%;
+      right: -10%;
+      width: 55%;
+      height: 70%;
+      background: radial-gradient(ellipse, rgba(212,0,255,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+    }
+
+    /* Boot sequence label */
+    .boot-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--cyan-dim);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fade-up 0.6s ease forwards 0.3s;
+    }
+    .boot-label::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: var(--cyan-dim);
+    }
+    .blink {
+      animation: blink 1.1s step-end infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* Main headline */
+    .hero-title {
+      font-family: var(--display);
+      font-size: clamp(42px, 7vw, 88px);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fade-up 0.8s ease forwards 0.6s;
+    }
+    .hero-title .line-1 { color: #fff; display: block; }
+    .hero-title .line-2 {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--cyan);
+      position: relative;
+    }
+    /* Glitch effect on title line 2 */
+    .hero-title .line-2::before,
+    .hero-title .line-2::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--cyan);
+    }
+    .hero-title .line-2::before {
+      color: var(--red-glitch);
+      -webkit-text-stroke: 0;
+      clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+      animation: glitch-1 4s infinite;
+    }
+    .hero-title .line-2::after {
+      color: var(--magenta);
+      -webkit-text-stroke: 0;
+      clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%);
+      animation: glitch-2 4s infinite;
+    }
+    @keyframes glitch-1 {
+      0%, 90%, 100% { transform: translateX(0); opacity: 0; }
+      92%            { transform: translateX(-4px); opacity: 0.8; }
+      94%            { transform: translateX(4px); opacity: 0.8; }
+      96%            { transform: translateX(0); opacity: 0; }
+    }
+    @keyframes glitch-2 {
+      0%, 88%, 100% { transform: translateX(0); opacity: 0; }
+      90%            { transform: translateX(5px); opacity: 0.7; }
+      92%            { transform: translateX(-3px); opacity: 0.7; }
+      94%            { transform: translateX(0); opacity: 0; }
+    }
+
+    /* Tagline */
+    .hero-tagline {
+      font-family: var(--body);
+      font-size: clamp(16px, 2.2vw, 22px);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      max-width: 520px;
+      margin-bottom: 48px;
+      opacity: 0;
+      animation: fade-up 0.8s ease forwards 0.9s;
+    }
+    .hero-tagline strong {
+      color: var(--cyan);
+      font-weight: 500;
+    }
+
+    /* CTA group */
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fade-up 0.8s ease forwards 1.1s;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 32px;
+      border: 1px solid;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      transform: translateX(-101%);
+      transition: transform 0.3s ease;
+    }
+    .btn:hover::before { transform: translateX(0); }
+    .btn span { position: relative; z-index: 1; }
+
+    .btn-primary {
+      color: var(--black);
+      background: var(--cyan);
+      border-color: var(--cyan);
+    }
+    .btn-primary::before { background: #fff; }
+    .btn-primary:hover { color: var(--black); }
+
+    .btn-secondary {
+      color: var(--cyan);
+      background: transparent;
+      border-color: rgba(0,229,255,0.3);
+    }
+    .btn-secondary::before { background: rgba(0,229,255,0.08); }
+    .btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    /* Hero right — vertical data stack */
+    .hero-data {
+      position: absolute;
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      align-items: flex-end;
+      opacity: 0;
+      animation: fade-in 1s ease forwards 1.4s;
+    }
+    .data-item {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.8;
+    }
+    .data-item .val {
+      display: block;
+      font-size: 13px;
+      color: var(--cyan-dim);
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 48px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fade-in 1s ease forwards 1.8s;
+    }
+    .scroll-hint span {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 48px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--cyan-dim), transparent);
+      animation: scroll-pulse 2s ease-in-out infinite;
+    }
+    @keyframes scroll-pulse {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 1; }
+    }
+
+    /* ─── SIGNAL STRIP ───────────────────────────────────── */
+    .signal-strip {
+      position: relative;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 14px 0;
+      background: rgba(6,13,20,0.8);
+    }
+    .signal-track {
+      display: flex;
+      gap: 64px;
+      animation: marquee 25s linear infinite;
+      white-space: nowrap;
+    }
+    .signal-item {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .signal-item::before {
+      content: '◈';
+      color: var(--cyan);
+      font-size: 8px;
+    }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ─── ABOUT STRIP ────────────────────────────────────── */
+    #about-strip {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--cyan-dim);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-eyebrow::before {
+      content: '//';
+      color: var(--text-muted);
+    }
+
+    .section-heading {
+      font-family: var(--display);
+      font-size: clamp(26px, 3.5vw, 42px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .section-body {
+      font-family: var(--body);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--text-dim);
+    }
+    .section-body p + p { margin-top: 16px; }
+
+    /* Right side terminal card */
+    .terminal-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .terminal-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    }
+    .terminal-topbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.3);
+    }
+    .t-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .t-dot-r { background: #ff5f57; }
+    .t-dot-y { background: #febc2e; }
+    .t-dot-g { background: #28c840; }
+    .terminal-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+    .terminal-body {
+      padding: 28px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 2;
+      color: var(--text-dim);
+    }
+    .t-line { display: block; }
+    .t-line.prompt::before {
+      content: '> ';
+      color: var(--cyan);
+    }
+    .t-line.output { color: var(--text-dim); padding-left: 16px; }
+    .t-line.highlight { color: var(--green); }
+    .t-line.warn { color: var(--magenta); }
+    .t-line.gap { display: block; height: 14px; }
+    .t-cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--cyan);
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+
+    /* ─── EPISODES / CONTENT SECTION ─────────────────────── */
+    #content {
+      padding: 80px 48px;
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .content-inner { max-width: 1200px; margin: 0 auto; }
+    .content-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 56px;
+    }
+
+    .episodes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .ep-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 36px 30px;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: border-color 0.3s, background 0.3s;
+      cursor: none;
+    }
+    .ep-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px;
+      width: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      transition: width 0.4s ease;
+    }
+    .ep-card:hover {
+      border-color: rgba(0,229,255,0.3);
+      background: rgba(0,229,255,0.03);
+    }
+    .ep-card:hover::after { width: 100%; }
+
+    .ep-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ep-num .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,229,255,0.6); }
+      50%       { opacity: 0.6; box-shadow: 0 0 0 6px rgba(0,229,255,0); }
+    }
+
+    .ep-title {
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #fff;
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+    .ep-desc {
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+    .ep-tag {
+      display: inline-block;
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--cyan-dim);
+      border: 1px solid rgba(0,229,255,0.2);
+      padding: 4px 10px;
+      text-transform: uppercase;
+    }
+
+    /* Featured (first) card */
+    .ep-card.featured {
+      grid-column: span 1;
+      border-color: rgba(0,229,255,0.2);
+      background: linear-gradient(135deg, rgba(0,229,255,0.04) 0%, transparent 60%);
+    }
+
+    /* ─── BOOK SECTION ───────────────────────────────────── */
+    #book {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    /* Book mockup */
+    .book-mockup {
+      position: relative;
+      perspective: 1000px;
+    }
+    .book-cover {
+      width: 100%;
+      aspect-ratio: 2/3;
+      background: linear-gradient(145deg, var(--panel), var(--deep));
+      border: 1px solid var(--border);
+      position: relative;
+      transform: rotateY(-12deg) rotateX(2deg);
+      transform-style: preserve-3d;
+      box-shadow:
+        -12px 20px 60px rgba(0,0,0,0.7),
+        4px 0 20px rgba(0,229,255,0.08);
+      transition: transform 0.5s ease;
+    }
+    .book-cover:hover {
+      transform: rotateY(-4deg) rotateX(1deg);
+    }
+    .book-cover::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--cyan));
+    }
+    .book-cover-inner {
+      position: absolute;
+      inset: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid rgba(0,229,255,0.1);
+    }
+    .book-cover-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .book-cover-title {
+      font-family: var(--display);
+      font-size: 22px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1.1;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+      letter-spacing: -0.01em;
+    }
+    .book-cover-title span {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--cyan);
+      letter-spacing: 0.3em;
+      margin-bottom: 6px;
+    }
+    .book-cover-author {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      padding: 16px 20px;
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(0,229,255,0.1);
+    }
+    /* Glow beneath book */
+    .book-mockup::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 20px; right: 20px;
+      height: 40px;
+      background: radial-gradient(ellipse, rgba(0,229,255,0.2) 0%, transparent 70%);
+      filter: blur(12px);
+    }
+
+    .book-info .section-body { margin-bottom: 32px; }
+
+    /* Feature list */
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+    .feature-list li {
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .feature-list li::before {
+      content: '▸';
+      color: var(--cyan);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ─── YOUTUBE SECTION ────────────────────────────────── */
+    #watch {
+      padding: 80px 48px;
+      background: var(--deep);
+      border-top: 1px solid var(--border);
+    }
+    .watch-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .yt-embed-wrapper {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .yt-embed-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #ff0000, var(--magenta));
+    }
+    .yt-embed-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .yt-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .yt-sub-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: #fff;
+      background: #ff0000;
+      padding: 12px 24px;
+      border: 1px solid #ff0000;
+      transition: all 0.25s;
+    }
+    .yt-sub-btn:hover {
+      background: transparent;
+      color: #ff0000;
+    }
+    .yt-icon {
+      width: 18px; height: 14px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ─── QUOTE DIVIDER ──────────────────────────────────── */
+    .quote-divider {
+      padding: 80px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .quote-divider::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 50% 50%, rgba(0,229,255,0.04) 0%, transparent 70%);
+    }
+    blockquote {
+      position: relative;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    blockquote p {
+      font-family: var(--display);
+      font-size: clamp(18px, 2.5vw, 28px);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.85);
+      text-transform: uppercase;
+    }
+    blockquote p em {
+      color: var(--cyan);
+      font-style: normal;
+    }
+    blockquote cite {
+      display: block;
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .quote-marks {
+      font-family: var(--display);
+      font-size: 120px;
+      line-height: 1;
+      color: rgba(0,229,255,0.08);
+      position: absolute;
+      top: -30px;
+      left: -20px;
+      user-select: none;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px;
+      background: var(--deep);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-brand {
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
+    .footer-brand span {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 0.25em;
+      margin-top: 4px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .footer-copy a {
+      color: var(--cyan-dim);
+      text-decoration: none;
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      #about-strip { grid-template-columns: 1fr; gap: 48px; }
+      #book { grid-template-columns: 1fr; }
+      .book-mockup { max-width: 280px; margin: 0 auto; }
+      .episodes-grid { grid-template-columns: 1fr 1fr; }
+      .watch-inner { grid-template-columns: 1fr; }
+      .hero-data { display: none; }
+    }
+    @media (max-width: 680px) {
+      nav { padding: 0 24px; }
+      #hero { padding: 100px 24px 80px; }
+      .nav-links { gap: 20px; }
+      .episodes-grid { grid-template-columns: 1fr; }
+      #about-strip, #book, #content, #watch { padding-left: 24px; padding-right: 24px; }
+      .quote-divider, footer { padding: 48px 24px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-copy { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ─── NAV ─────────────────────────────────────────────── -->
+  <nav>
+    <a href="index.html" class="nav-logo">Glitch in the Gospel</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── HERO ─────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+
+    <div class="hero-content">
+      <div class="boot-label">
+        SIGNAL DETECTED <span class="blink">_</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="line-1">Glitch in</span>
+        <span class="line-2" data-text="the Gospel">the Gospel</span>
+      </h1>
+
+      <p class="hero-tagline">
+        The pattern isn't random. It's <strong>ancient</strong>.<br />
+        And something in the code is trying to wake you up.
+      </p>
+
+      <div class="hero-ctas">
+        <a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener" class="btn btn-primary">
+          <span>Watch the Series</span>
+        </a>
+        <a href="blog.html" class="btn btn-secondary">
+          <span>Read the Transmissions</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-data">
+      <div class="data-item">
+        CHANNEL<br />
+        <span class="val">@GlitchintheGospel</span>
+      </div>
+      <div class="data-item">
+        AUTHOR<br />
+        <span class="val">Z.W. Speegle</span>
+      </div>
+      <div class="data-item">
+        STATUS<br />
+        <span class="val">TRANSMITTING</span>
+      </div>
+      <div class="data-item">
+        CLASSIFICATION<br />
+        <span class="val">SIGNAL / PATTERN</span>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll to descend</span>
+    </div>
+  </section>
+
+  <!-- ─── SIGNAL MARQUEE ────────────────────────────────────── -->
+  <div class="signal-strip">
+    <div class="signal-track">
+      <span class="signal-item">Wars and rumors of wars</span>
+      <span class="signal-item">The pattern is not coincidence</span>
+      <span class="signal-item">Reality is structured</span>
+      <span class="signal-item">Ancient texts as debug logs</span>
+      <span class="signal-item">The sixth day is winding down</span>
+      <span class="signal-item">The signal is real</span>
+      <span class="signal-item">Entropy is accelerating</span>
+      <span class="signal-item">Something in the code is waking</span>
+      <!-- duplicate for seamless loop -->
+      <span class="signal-item">Wars and rumors of wars</span>
+      <span class="signal-item">The pattern is not coincidence</span>
+      <span class="signal-item">Reality is structured</span>
+      <span class="signal-item">Ancient texts as debug logs</span>
+      <span class="signal-item">The sixth day is winding down</span>
+      <span class="signal-item">The signal is real</span>
+      <span class="signal-item">Entropy is accelerating</span>
+      <span class="signal-item">Something in the code is waking</span>
+    </div>
+  </div>
+
+  <!-- ─── ABOUT STRIP ───────────────────────────────────────── -->
+  <section id="about-strip">
+    <div class="reveal">
+      <div class="section-eyebrow">What is this</div>
+      <h2 class="section-heading">The System<br />Has Always<br />Been Telling You</h2>
+      <div class="section-body">
+        <p>Every generation watches empires collide over the same ancient land. The same fault lines. The same acceleration. The same outcome.</p>
+        <p>Glitch in the Gospel is where theology meets systems theory — where the oldest recurring patterns in recorded history get translated into a language the modern mind can actually process.</p>
+        <p>Not religion trying to scare you. A signal trying to reach you.</p>
+      </div>
+    </div>
+
+    <div class="terminal-card reveal reveal-delay-2">
+      <div class="terminal-topbar">
+        <div class="t-dot t-dot-r"></div>
+        <div class="t-dot t-dot-y"></div>
+        <div class="t-dot t-dot-g"></div>
+        <span class="terminal-title">reality_diagnostic.log</span>
+      </div>
+      <div class="terminal-body">
+        <span class="t-line prompt">scan --region=history --depth=6000yr</span>
+        <span class="t-line gap"></span>
+        <span class="t-line output">Loading pattern index...</span>
+        <span class="t-line output highlight">MATCH FOUND: Persia / Israel loop × 2600yr</span>
+        <span class="t-line output highlight">MATCH FOUND: Empire collapse cycle × 7</span>
+        <span class="t-line output warn">WARNING: Entropy spike — current epoch</span>
+        <span class="t-line gap"></span>
+        <span class="t-line prompt">analyze --signal=matthew24</span>
+        <span class="t-line gap"></span>
+        <span class="t-line output">"Wars and rumors of wars."</span>
+        <span class="t-line output">"These things must happen."</span>
+        <span class="t-line output highlight">Status: Not coincidence. ARCHITECTURE.</span>
+        <span class="t-line gap"></span>
+        <span class="t-line prompt">query --status=now <span class="t-cursor"></span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── EPISODES SECTION ──────────────────────────────────── -->
+  <section id="content">
+    <div class="content-inner">
+      <div class="content-header reveal">
+        <div>
+          <div class="section-eyebrow">Episodes</div>
+          <h2 class="section-heading">Latest Transmissions</h2>
+        </div>
+        <a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener" class="btn btn-secondary">
+          <span>View All</span>
+        </a>
+      </div>
+
+      <div class="episodes-grid">
+        <a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener" class="ep-card featured reveal reveal-delay-1">
+          <div class="ep-num"><span class="dot"></span> S1E1 — NOW LIVE</div>
+          <div class="ep-title">Wars &amp; Rumors<br />of Wars</div>
+          <div class="ep-desc">Tehran. Kharg Island. The Strait of Hormuz. The same land. The same actors. The same loop — stretching back thousands of years. This is where we begin.</div>
+          <span class="ep-tag">Watch Now</span>
+        </a>
+
+        <div class="ep-card reveal reveal-delay-2">
+          <div class="ep-num">S1E2 — COMING SOON</div>
+          <div class="ep-title">The NPC<br />Problem</div>
+          <div class="ep-desc">Why most people can't hear the signal even when it's screaming. The difference between reacting to the noise and reading the pattern.</div>
+          <span class="ep-tag">Upcoming</span>
+        </div>
+
+        <div class="ep-card reveal reveal-delay-3">
+          <div class="ep-num">THE BOOK</div>
+          <div class="ep-title">The End of<br />the Sixth Day</div>
+          <div class="ep-desc">The full framework. Simulation theory, ancient scripture, and the architecture behind the reality most people never stop to examine.</div>
+          <span class="ep-tag">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── BOOK SECTION ──────────────────────────────────────── -->
+  <section id="book">
+    <div class="book-mockup reveal">
+      <div class="book-cover">
+        <div class="book-cover-grid"></div>
+        <div class="book-cover-inner">
+          <div class="book-cover-title">
+            <span>Z.W. Speegle</span>
+            The End of<br />the Sixth<br />Day
+          </div>
+          <div class="book-cover-author">GLITCH IN THE GOSPEL — BOOK I</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="book-info reveal reveal-delay-2">
+      <div class="section-eyebrow">The Book</div>
+      <h2 class="section-heading">Reality Isn't<br />What You Were<br />Running</h2>
+      <div class="section-body">
+        <p>What if the ancient texts weren't mythology — but source code? What if simulation theory, quantum physics, and scripture are all pointing at the same architecture?</p>
+        <p><em>The End of the Sixth Day</em> by Z.W. Speegle builds a framework where the oldest patterns in human history and the most cutting-edge ideas in physics converge on a single, uncomfortable conclusion: the system is not random, and you are running out of the sixth day.</p>
+      </div>
+      <ul class="feature-list">
+        <li>Simulation theory meets ancient scripture</li>
+        <li>The Millennial Day Theory decoded</li>
+        <li>Entropy, consciousness, and the architecture of collapse</li>
+        <li>Why history keeps repeating — and what it signals</li>
+        <li>The reset is not destruction. It's renovation.</li>
+      </ul>
+      <a href="contact.html" class="btn btn-secondary">
+        <span>Get Notified on Release</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── QUOTE DIVIDER ─────────────────────────────────────── -->
+  <div class="quote-divider">
+    <blockquote>
+      <span class="quote-marks">"</span>
+      <p>If history is <em>repeating</em> not by accident but by <em>architecture</em> — and ancient texts described this exact acceleration thousands of years before it arrived — then the question is no longer whether the system is designed. The question is whether <em>you're paying attention.</em></p>
+      <cite>— Z.W. Speegle, Glitch in the Gospel</cite>
+    </blockquote>
+  </div>
+
+  <!-- ─── WATCH SECTION ─────────────────────────────────────── -->
+  <section id="watch">
+    <div class="watch-inner">
+      <div class="reveal">
+        <div class="section-eyebrow">YouTube</div>
+        <h2 class="section-heading">Watch the<br />Series</h2>
+        <div class="section-body">
+          <p>New episodes of Glitch in the Gospel drop on YouTube. Subscribe to stay locked in as the series unfolds — each episode a deeper layer of the pattern.</p>
+        </div>
+        <div class="yt-cta">
+          <a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener" class="yt-sub-btn">
+            <svg class="yt-icon" viewBox="0 0 24 17" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23.5 2.7A3 3 0 0 0 21.4.6C19.5 0 12 0 12 0S4.5 0 2.6.6A3 3 0 0 0 .5 2.7C0 4.6 0 8.5 0 8.5s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1C4.5 17 12 17 12 17s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 12.4 24 8.5 24 8.5s0-3.9-.5-5.8z"/>
+              <path fill="#ff0000" d="M0 0" opacity="0"/>
+              <polygon fill="currentColor" points="9.5,12.5 9.5,4.5 16,8.5"/>
+            </svg>
+            <span>Subscribe on YouTube</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="yt-embed-wrapper reveal reveal-delay-2">
+        <iframe
+          src="https://www.youtube.com/embed?listType=user_uploads&list=GlitchintheGospel"
+          title="Glitch in the Gospel — YouTube"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        Glitch in the Gospel
+        <span>Z.W. Speegle — The Signal is Real</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <div class="footer-copy">
+        &copy; 2025 Z.W. Speegle<br />
+        <a href="mailto:glitchinthegospel@gmail.com">glitchinthegospel@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── SCRIPTS ───────────────────────────────────────────── -->
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animateCursor() {
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+      rx += (mx - rx) * 0.15;
+      ry += (my - ry) * 0.15;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(2)';
+        cursor.style.background = 'var(--magenta)';
+        ring.style.borderColor = 'rgba(212,0,255,0.5)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursor.style.background = 'var(--cyan)';
+        ring.style.borderColor = 'rgba(0,229,255,0.4)';
+      });
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Occasional glitch flash on hero title
+    const title = document.querySelector('.hero-title .line-2');
+    if (title) {
+      setInterval(() => {
+        title.style.textShadow = '2px 0 var(--red-glitch), -2px 0 var(--cyan)';
+        setTimeout(() => { title.style.textShadow = ''; }, 80);
+      }, 5000 + Math.random() * 5000);
+    }
+  </script>
+</body>
+</html>
