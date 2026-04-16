@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Z.W. Speegle | Glitch in the Gospel</title>
+  <meta name="description" content="Z.W. Speegle — author of The End of the Sixth Day and host of Glitch in the Gospel. Theology, simulation theory, and the patterns hiding in plain sight." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --black:      #020508;
+      --deep:       #060d14;
+      --panel:      #0a1520;
+      --border:     #0f2535;
+      --cyan:       #00e5ff;
+      --cyan-dim:   #00a8bf;
+      --magenta:    #d400ff;
+      --mag-dim:    #8b00a8;
+      --green:      #00ff88;
+      --red-glitch: #ff003c;
+      --text:       #c8dde8;
+      --text-dim:   #5a7a8a;
+      --text-muted: #2a4050;
+      --mono:       'Share Tech Mono', monospace;
+      --display:    'Orbitron', sans-serif;
+      --body:       'Rajdhani', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 18px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CURSOR ─────────────────────────────────────────── */
+    .cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s, background 0.2s;
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan);
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 28px; height: 28px;
+      border: 1px solid rgba(0,229,255,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease-out, border-color 0.2s;
+    }
+
+    /* ─── SCANLINE + NOISE ───────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.3;
+    }
+
+    /* ─── NAV ────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      background: linear-gradient(180deg, rgba(2,5,8,0.98) 0%, rgba(2,5,8,0.0) 100%);
+      border-bottom: 1px solid rgba(0,229,255,0.08);
+    }
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: var(--cyan);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-logo::before { content: '['; color: var(--text-dim); margin-right: 4px; }
+    .nav-logo::after  { content: ']'; color: var(--text-dim); margin-left: 4px; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transition: transform 0.25s;
+      transform-origin: left;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-links a.active { color: var(--cyan); }
+    .nav-links a.active::after { transform: scaleX(1); }
+
+    /* ─── PAGE HEADER ────────────────────────────────────── */
+    .page-header {
+      position: relative;
+      padding: 140px 48px 80px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .page-header-glow {
+      position: absolute;
+      top: 0; right: 0;
+      width: 50%; height: 100%;
+      background: radial-gradient(ellipse at 80% 30%, rgba(212,0,255,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .page-header-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--cyan-dim);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fade-up 0.6s ease forwards 0.2s;
+    }
+    .page-eyebrow::before { content: '//'; color: var(--text-muted); }
+    .page-title {
+      font-family: var(--display);
+      font-size: clamp(36px, 6vw, 76px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: #fff;
+      opacity: 0;
+      animation: fade-up 0.7s ease forwards 0.4s;
+    }
+    .page-title .accent {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--cyan);
+    }
+    .page-subtitle {
+      margin-top: 24px;
+      font-family: var(--body);
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--text-dim);
+      max-width: 560px;
+      opacity: 0;
+      animation: fade-up 0.7s ease forwards 0.6s;
+    }
+
+    /* ─── LAYOUT WRAPPER ─────────────────────────────────── */
+    .page-body {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    /* ─── PROFILE SECTION ────────────────────────────────── */
+    #profile {
+      padding: 80px 0;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 80px;
+      align-items: start;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Photo panel */
+    .profile-visual {
+      position: relative;
+    }
+    .photo-frame {
+      position: relative;
+      aspect-ratio: 3/4;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .photo-frame::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      z-index: 2;
+    }
+    /* Grid texture inside photo frame */
+    .photo-frame-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    /* Placeholder silhouette */
+    .photo-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .silhouette-icon {
+      width: 100px;
+      height: 120px;
+      opacity: 0.12;
+    }
+    .photo-placeholder-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 2;
+    }
+    /* Corner accents on frame */
+    .photo-frame::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 40px; height: 40px;
+      border-bottom: 2px solid var(--cyan);
+      border-right: 2px solid var(--cyan);
+      z-index: 2;
+    }
+    .corner-tl {
+      position: absolute;
+      top: 0; left: 0;
+      width: 40px; height: 40px;
+      border-top: 2px solid var(--magenta);
+      border-left: 2px solid var(--magenta);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* Identity card below photo */
+    .identity-card {
+      margin-top: 2px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-top: none;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .id-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .id-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .id-value {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--cyan-dim);
+    }
+    .id-divider {
+      height: 1px;
+      background: var(--border);
+    }
+    .id-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse-status 2s ease-in-out infinite;
+    }
+    @keyframes pulse-status {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.6); }
+      50%       { box-shadow: 0 0 0 6px rgba(0,255,136,0); }
+    }
+
+    /* Bio content */
+    .profile-bio {}
+    .section-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--cyan-dim);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-eyebrow::before { content: '//'; color: var(--text-muted); }
+    .section-heading {
+      font-family: var(--display);
+      font-size: clamp(24px, 3vw, 38px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .bio-body {
+      font-family: var(--body);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-dim);
+    }
+    .bio-body p + p { margin-top: 18px; }
+    .bio-body strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .bio-body em {
+      color: var(--cyan-dim);
+      font-style: italic;
+    }
+
+    /* ─── STATS ROW ──────────────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 40px;
+    }
+    .stat-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--cyan), transparent);
+    }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--cyan);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ─── MISSION SECTION ────────────────────────────────── */
+    #mission {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .mission-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 48px;
+    }
+    .mission-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .mission-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+    }
+    .mission-card:hover { border-color: rgba(0,229,255,0.3); }
+    .mission-card-num {
+      font-family: var(--display);
+      font-size: 48px;
+      font-weight: 900;
+      color: rgba(0,229,255,0.07);
+      line-height: 1;
+      position: absolute;
+      top: 20px; right: 24px;
+    }
+    .mission-card-title {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .mission-card-body {
+      font-family: var(--body);
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-dim);
+    }
+
+    /* ─── INFLUENCES / FRAMEWORK SECTION ─────────────────── */
+    #framework {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .framework-intro {
+      max-width: 640px;
+      margin-bottom: 56px;
+    }
+    .framework-intro p {
+      font-family: var(--body);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--text-dim);
+      margin-top: 16px;
+    }
+
+    .tags-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 32px;
+    }
+    .tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      background: var(--panel);
+      transition: all 0.25s;
+    }
+    .tag:hover {
+      border-color: var(--cyan-dim);
+      color: var(--cyan);
+      background: rgba(0,229,255,0.04);
+    }
+    .tag.cyan  { border-color: rgba(0,229,255,0.3); color: var(--cyan-dim); }
+    .tag.mag   { border-color: rgba(212,0,255,0.3); color: var(--mag-dim); }
+    .tag.green { border-color: rgba(0,255,136,0.3); color: var(--green); opacity: 0.7; }
+
+    /* ─── BOOK TEASER ────────────────────────────────────── */
+    #book-teaser {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 64px;
+      align-items: center;
+    }
+    .book-quote-panel {
+      position: relative;
+      padding: 40px 44px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+    }
+    .book-quote-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--magenta), var(--cyan));
+    }
+    .book-quote-panel blockquote {
+      font-family: var(--body);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--text);
+      font-style: italic;
+      border: none;
+      padding: 0;
+    }
+    .book-quote-panel blockquote em {
+      color: var(--cyan);
+      font-style: normal;
+    }
+    .book-quote-panel cite {
+      display: block;
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-style: normal;
+    }
+    .big-quote-mark {
+      font-family: var(--display);
+      font-size: 100px;
+      line-height: 1;
+      color: rgba(212,0,255,0.08);
+      position: absolute;
+      top: 10px; left: 20px;
+      user-select: none;
+    }
+
+    .book-mini-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .book-mini-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    }
+    .book-mini-cover {
+      aspect-ratio: 2/3;
+      background: linear-gradient(145deg, rgba(0,229,255,0.06), transparent);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .book-mini-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .book-mini-title {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+    .book-mini-title span {
+      display: block;
+      font-size: 9px;
+      font-weight: 400;
+      color: var(--cyan);
+      letter-spacing: 0.3em;
+      margin-bottom: 6px;
+    }
+    .book-mini-author {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+    .book-mini-footer {
+      padding: 18px 20px;
+    }
+    .book-mini-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 20px;
+      border: 1px solid;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      transform: translateX(-101%);
+      transition: transform 0.3s ease;
+    }
+    .btn:hover::before { transform: translateX(0); }
+    .btn span { position: relative; z-index: 1; }
+    .btn-secondary {
+      color: var(--cyan);
+      background: transparent;
+      border-color: rgba(0,229,255,0.3);
+    }
+    .btn-secondary::before { background: rgba(0,229,255,0.08); }
+    .btn-secondary:hover { border-color: var(--cyan); }
+
+    /* ─── CONNECT SECTION ────────────────────────────────── */
+    #connect {
+      padding: 80px 0 100px;
+    }
+    .connect-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      margin-top: 48px;
+    }
+    .connect-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 32px 28px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, background 0.3s;
+      cursor: none;
+    }
+    .connect-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px; width: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      transition: width 0.4s ease;
+    }
+    .connect-card:hover { border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.02); }
+    .connect-card:hover::after { width: 100%; }
+    .connect-icon {
+      width: 40px; height: 40px;
+      margin-bottom: 20px;
+      color: var(--cyan-dim);
+    }
+    .connect-card-title {
+      font-family: var(--display);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .connect-card-desc {
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+    .connect-card-link {
+      display: inline-block;
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--cyan-dim);
+      text-transform: uppercase;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px;
+      background: var(--deep);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-brand {
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
+    .footer-brand span {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 0.25em;
+      margin-top: 4px;
+    }
+    .footer-links { display: flex; gap: 32px; list-style: none; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .footer-copy a { color: var(--cyan-dim); text-decoration: none; }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      #profile       { grid-template-columns: 1fr; }
+      .profile-visual { max-width: 320px; }
+      .mission-grid  { grid-template-columns: 1fr; }
+      #book-teaser   { grid-template-columns: 1fr; }
+      .book-mini-card { max-width: 280px; }
+      .connect-grid  { grid-template-columns: 1fr 1fr; }
+      .stats-row     { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 680px) {
+      nav, .page-header, footer { padding-left: 24px; padding-right: 24px; }
+      .page-body { padding-left: 24px; padding-right: 24px; }
+      .nav-links { gap: 20px; }
+      .connect-grid { grid-template-columns: 1fr; }
+      .stats-row    { grid-template-columns: 1fr 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-copy  { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ─── NAV ─────────────────────────────────────────────── -->
+  <nav>
+    <a href="index.html" class="nav-logo">Glitch in the Gospel</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="page-header-grid"></div>
+    <div class="page-header-glow"></div>
+    <div class="page-header-inner">
+      <div class="page-eyebrow">Personnel File</div>
+      <h1 class="page-title">
+        Z.W.<br />
+        <span class="accent">Speegle</span>
+      </h1>
+      <p class="page-subtitle">Author. Analyst. Signal reader. Someone who looked at the loop long enough that the loop started looking back.</p>
+    </div>
+  </header>
+
+  <!-- ─── BODY ─────────────────────────────────────────────── -->
+  <main class="page-body">
+
+    <!-- ─── PROFILE ──────────────────────────────────────── -->
+    <section id="profile">
+
+      <!-- Photo / Identity panel -->
+      <div class="profile-visual reveal">
+        <div class="photo-frame">
+          <div class="photo-frame-grid"></div>
+          <div class="corner-tl"></div>
+
+          <!-- ════════════════════════════════════════════════
+               PHOTO SLOT — replace everything inside
+               .photo-placeholder with an <img> tag:
+               <img src="your-photo.jpg" alt="Z.W. Speegle"
+                    style="width:100%;height:100%;object-fit:cover;display:block;" />
+               ════════════════════════════════════════════════ -->
+          <div class="photo-placeholder">
+            <svg class="silhouette-icon" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="34" r="24" fill="rgba(0,229,255,0.15)" stroke="rgba(0,229,255,0.3)" stroke-width="1"/>
+              <path d="M10 110 C10 80 90 80 90 110" stroke="rgba(0,229,255,0.3)" stroke-width="1" fill="rgba(0,229,255,0.06)"/>
+            </svg>
+            <div class="photo-placeholder-label">
+              Photo Coming Soon<br />
+              <span style="color:var(--text-muted);font-size:9px;">Replace .photo-placeholder with &lt;img&gt;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="identity-card">
+          <div class="id-row">
+            <span class="id-label">Full Name</span>
+            <span class="id-value">Z.W. Speegle</span>
+          </div>
+          <div class="id-divider"></div>
+          <div class="id-row">
+            <span class="id-label">Role</span>
+            <span class="id-value">Author / Host</span>
+          </div>
+          <div class="id-divider"></div>
+          <div class="id-row">
+            <span class="id-label">Channel</span>
+            <span class="id-value">@GlitchintheGospel</span>
+          </div>
+          <div class="id-divider"></div>
+          <div class="id-status">
+            <span class="status-dot"></span>
+            Transmission Active
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio text -->
+      <div class="profile-bio reveal reveal-delay-2">
+        <div class="section-eyebrow">Who is this</div>
+        <h2 class="section-heading">The Writer<br />Behind the Signal</h2>
+
+        <div class="bio-body">
+          <!-- ═══════════════════════════════════════════════
+               BIO SLOT — Edit the paragraphs below freely.
+               These are placeholder drafts based on the
+               book and episode content. Replace or expand
+               with your own words as needed.
+               ═══════════════════════════════════════════════ -->
+          <p>Z.W. Speegle is the author of <em>The End of the Sixth Day</em> and the creator and host of <strong>Glitch in the Gospel</strong> — a video series that sits at the intersection of ancient scripture, simulation theory, and the patterns hiding in plain sight inside modern history.</p>
+
+          <p>The work didn't start as a project. It started as a question that wouldn't go away: <strong>why does the same geography keep producing the same conflict, the same collapse, the same acceleration?</strong> The answer, once you start pulling the thread, reaches back thousands of years — and points forward to something most people aren't ready to consider.</p>
+
+          <p>Speegle writes and speaks for two audiences who rarely sit in the same room: those steeped in faith who are afraid science will dismantle what they believe, and those steeped in science who assume ancient texts have nothing useful to say. The argument is that both groups are working with an incomplete map — and that the full map is stranger, more coherent, and more urgent than either camp suspects.</p>
+
+          <p>This is not a ministry. It's not a podcast about prophecy charts or end-times countdown clocks. It's an attempt to read the architecture of reality the way an engineer reads a codebase — looking for structure, intention, and pattern — and to ask what that architecture is trying to tell us right now, in this moment, in this era.</p>
+
+          <p><strong>The signal is real. The question is whether you're paying attention.</strong></p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-num">1</div>
+            <div class="stat-label">Book Published</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">∞</div>
+            <div class="stat-label">Years of Pattern</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">6</div>
+            <div class="stat-label">Days on the Clock</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── MISSION ───────────────────────────────────────── -->
+    <section id="mission">
+      <div class="reveal">
+        <div class="section-eyebrow">The Mission</div>
+        <h2 class="section-heading">Why This Exists</h2>
+      </div>
+
+      <div class="mission-grid">
+        <div class="mission-card reveal reveal-delay-1">
+          <div class="mission-card-num">01</div>
+          <div class="mission-card-title">Read the Pattern</div>
+          <div class="mission-card-body">History isn't random noise. It's a repeating signal — the same empires, the same geography, the same fractures — cycling on a loop that stretches back to the first pages of recorded civilization. The first job is simply to see it.</div>
+        </div>
+
+        <div class="mission-card reveal reveal-delay-2">
+          <div class="mission-card-num">02</div>
+          <div class="mission-card-title">Translate the Signal</div>
+          <div class="mission-card-body">Ancient texts were written in the language of their moment. Glitch in the Gospel translates them into the language of this one — systems theory, simulation architecture, physics, and the vocabulary of a generation that thinks in code.</div>
+        </div>
+
+        <div class="mission-card reveal reveal-delay-3">
+          <div class="mission-card-num">03</div>
+          <div class="mission-card-title">Bridge the Gap</div>
+          <div class="mission-card-body">The war between faith and science is a false binary. The framework here holds both — not by softening either, but by finding the deeper architecture underneath that makes both make sense at the same time.</div>
+        </div>
+
+        <div class="mission-card reveal reveal-delay-4">
+          <div class="mission-card-num">04</div>
+          <div class="mission-card-title">Wake the Reader</div>
+          <div class="mission-card-body">Not to scare. Not to recruit. To hand someone a lens they didn't have before — and let them look at the world through it and decide for themselves what they're seeing. The signal is real. What you do with it is yours.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FRAMEWORK / INFLUENCES ───────────────────────── -->
+    <section id="framework">
+      <div class="framework-intro reveal">
+        <div class="section-eyebrow">The Framework</div>
+        <h2 class="section-heading">Built From<br />Many Sources</h2>
+        <p>The ideas in Glitch in the Gospel and <em>The End of the Sixth Day</em> draw on a deliberately wide field — theology, physics, philosophy, gaming theory, and consciousness research — because the truth of any one system is best tested by how well it holds up under pressure from all the others.</p>
+      </div>
+
+      <div class="tags-cluster reveal reveal-delay-2">
+        <span class="tag cyan">Simulation Theory</span>
+        <span class="tag cyan">Quantum Mechanics</span>
+        <span class="tag">Biblical Eschatology</span>
+        <span class="tag">Millennial Day Theory</span>
+        <span class="tag mag">Consciousness Research</span>
+        <span class="tag">Thomas Campbell — LCS</span>
+        <span class="tag">Edward Fredkin — Digital Physics</span>
+        <span class="tag cyan">Pattern Recognition</span>
+        <span class="tag">Rizwan Virk — Simulation Hypothesis</span>
+        <span class="tag">Ancient Near East History</span>
+        <span class="tag mag">Entropy Theory</span>
+        <span class="tag">Hebrew Scripture</span>
+        <span class="tag green">Systems Architecture</span>
+        <span class="tag">The Matrix as Parable</span>
+        <span class="tag">Plato's Allegory of the Cave</span>
+        <span class="tag cyan">Prophetic Literature</span>
+        <span class="tag">DNA as Code</span>
+        <span class="tag green">Game Design Logic</span>
+      </div>
+    </section>
+
+    <!-- ─── BOOK TEASER ───────────────────────────────────── -->
+    <section id="book-teaser">
+      <div class="book-quote-panel reveal">
+        <span class="big-quote-mark">"</span>
+        <blockquote>
+          <p>The system was never random. You were not born into chaos. You were born into a simulation coded with <em>love</em>, designed for growth, and built to test your ability to remember where you came from.</p>
+          <cite>— The End of the Sixth Day, Z.W. Speegle</cite>
+        </blockquote>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="book-mini-card">
+          <div class="book-mini-cover">
+            <div class="book-mini-grid"></div>
+            <div class="book-mini-title">
+              <span>Z.W. Speegle</span>
+              The End of<br />the Sixth<br />Day
+            </div>
+            <div class="book-mini-author">Glitch in the Gospel — Book I</div>
+          </div>
+          <div class="book-mini-footer">
+            <div class="book-mini-label">Purchase Link Coming Soon</div>
+            <a href="contact.html" class="btn btn-secondary">
+              <span>Get Notified</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── CONNECT ───────────────────────────────────────── -->
+    <section id="connect">
+      <div class="reveal">
+        <div class="section-eyebrow">Connect</div>
+        <h2 class="section-heading">Find the Signal</h2>
+      </div>
+
+      <div class="connect-grid">
+        <a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener" class="connect-card reveal reveal-delay-1">
+          <svg class="connect-icon" viewBox="0 0 24 17" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M23.5 2.7A3 3 0 0 0 21.4.6C19.5 0 12 0 12 0S4.5 0 2.6.6A3 3 0 0 0 .5 2.7C0 4.6 0 8.5 0 8.5s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1C4.5 17 12 17 12 17s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 12.4 24 8.5 24 8.5s0-3.9-.5-5.8z"/>
+            <polygon fill="var(--black)" points="9.5,12.5 9.5,4.5 16,8.5"/>
+          </svg>
+          <div class="connect-card-title">YouTube</div>
+          <div class="connect-card-desc">New episodes of Glitch in the Gospel. Subscribe and stay inside the signal as the series unfolds.</div>
+          <span class="connect-card-link">@GlitchintheGospel →</span>
+        </a>
+
+        <a href="blog.html" class="connect-card reveal reveal-delay-2">
+          <svg class="connect-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 6h16M4 10h10M4 14h16M4 18h10" stroke-linecap="round"/>
+          </svg>
+          <div class="connect-card-title">The Blog</div>
+          <div class="connect-card-desc">Written transmissions — deeper dives, episode companion pieces, and threads that don't fit in a video runtime.</div>
+          <span class="connect-card-link">Read Transmissions →</span>
+        </a>
+
+        <a href="contact.html" class="connect-card reveal reveal-delay-3">
+          <svg class="connect-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M2 7l10 7 10-7" stroke-linecap="round"/>
+          </svg>
+          <div class="connect-card-title">Contact</div>
+          <div class="connect-card-desc">Questions, feedback, press, or just a signal ping. All transmissions received at the same address.</div>
+          <span class="connect-card-link">glitchinthegospel@gmail.com →</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── FOOTER ────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        Glitch in the Gospel
+        <span>Z.W. Speegle — The Signal is Real</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <div class="footer-copy">
+        &copy; 2025 Z.W. Speegle<br />
+        <a href="mailto:glitchinthegospel@gmail.com">glitchinthegospel@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    function animateCursor() {
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+        cursor.style.background = 'var(--magenta)';
+        ring.style.borderColor = 'rgba(212,0,255,0.5)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+        cursor.style.background = 'var(--cyan)';
+        ring.style.borderColor = 'rgba(0,229,255,0.4)';
+      });
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
