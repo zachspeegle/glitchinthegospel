@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transmissions — Glitch in the Gospel | Z.W. Speegle</title>
+  <meta name="description" content="Written transmissions from Z.W. Speegle — deeper dives, episode companions, and threads the algorithm won't surface." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --black:      #020508;
+      --deep:       #060d14;
+      --panel:      #0a1520;
+      --border:     #0f2535;
+      --cyan:       #00e5ff;
+      --cyan-dim:   #00a8bf;
+      --magenta:    #d400ff;
+      --mag-dim:    #8b00a8;
+      --green:      #00ff88;
+      --red-glitch: #ff003c;
+      --text:       #c8dde8;
+      --text-dim:   #5a7a8a;
+      --text-muted: #2a4050;
+      --mono:       'Share Tech Mono', monospace;
+      --display:    'Orbitron', sans-serif;
+      --body:       'Rajdhani', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 18px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── CURSOR ─────────────────────────────────────────── */
+    .cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s, background 0.2s;
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan);
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 28px; height: 28px;
+      border: 1px solid rgba(0,229,255,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease-out, border-color 0.2s;
+    }
+
+    /* ─── SCANLINE + NOISE ───────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.3;
+    }
+
+    /* ─── NAV ────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      background: linear-gradient(180deg, rgba(2,5,8,0.98) 0%, rgba(2,5,8,0.0) 100%);
+      border-bottom: 1px solid rgba(0,229,255,0.08);
+    }
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: var(--cyan);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+    .nav-logo::before { content: '['; color: var(--text-dim); margin-right: 4px; }
+    .nav-logo::after  { content: ']'; color: var(--text-dim); margin-left: 4px; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transition: transform 0.25s;
+      transform-origin: left;
+    }
+    .nav-links a:hover { color: var(--cyan); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-links a.active { color: var(--cyan); }
+    .nav-links a.active::after { transform: scaleX(1); }
+
+    /* ─── PAGE HEADER ────────────────────────────────────── */
+    .page-header {
+      position: relative;
+      padding: 140px 48px 80px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-header-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .page-header-glow {
+      position: absolute;
+      bottom: -30%; left: -10%;
+      width: 60%; height: 100%;
+      background: radial-gradient(ellipse at 20% 80%, rgba(0,229,255,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .page-header-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .page-header-left {}
+    .page-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--cyan-dim);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fade-up 0.6s ease forwards 0.2s;
+    }
+    .page-eyebrow::before { content: '//'; color: var(--text-muted); }
+    .page-title {
+      font-family: var(--display);
+      font-size: clamp(36px, 6vw, 76px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: #fff;
+      opacity: 0;
+      animation: fade-up 0.7s ease forwards 0.4s;
+    }
+    .page-title .accent {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--cyan);
+    }
+    .page-subtitle {
+      margin-top: 24px;
+      font-family: var(--body);
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--text-dim);
+      max-width: 480px;
+      opacity: 0;
+      animation: fade-up 0.7s ease forwards 0.6s;
+    }
+
+    /* Filter controls */
+    .filter-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+      opacity: 0;
+      animation: fade-in 0.8s ease forwards 0.8s;
+    }
+    .filter-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .filter-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .filter-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: transparent;
+      cursor: none;
+      transition: all 0.2s;
+    }
+    .filter-tag:hover,
+    .filter-tag.active {
+      border-color: var(--cyan-dim);
+      color: var(--cyan);
+      background: rgba(0,229,255,0.05);
+    }
+
+    /* ─── MAIN LAYOUT ────────────────────────────────────── */
+    .blog-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 48px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 64px;
+      align-items: start;
+    }
+
+    /* ─── FEATURED POST ──────────────────────────────────── */
+    .featured-post {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 16px;
+      text-decoration: none;
+      color: inherit;
+      cursor: none;
+      transition: border-color 0.3s;
+    }
+    .featured-post::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    }
+    .featured-post:hover { border-color: rgba(0,229,255,0.3); }
+    .featured-post:hover .fp-read-more { color: var(--cyan); }
+
+    .fp-visual {
+      position: relative;
+      min-height: 340px;
+      background: linear-gradient(135deg, rgba(0,229,255,0.04) 0%, rgba(212,0,255,0.04) 100%);
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .fp-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: grid-drift 15s linear infinite;
+    }
+    @keyframes grid-drift {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(40px); }
+    }
+    .fp-glyph {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--display);
+      font-size: 120px;
+      font-weight: 900;
+      color: rgba(0,229,255,0.05);
+      letter-spacing: -0.05em;
+      user-select: none;
+      line-height: 1;
+    }
+    .fp-badge {
+      position: absolute;
+      top: 24px; left: 24px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--black);
+      background: var(--cyan);
+      padding: 5px 12px;
+      text-transform: uppercase;
+    }
+
+    .fp-content {
+      padding: 44px 44px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .fp-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .fp-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+    .fp-cat {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan-dim);
+      border: 1px solid rgba(0,229,255,0.2);
+      padding: 3px 10px;
+    }
+    .fp-title {
+      font-family: var(--display);
+      font-size: clamp(20px, 2.5vw, 30px);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 18px;
+    }
+    .fp-excerpt {
+      font-family: var(--body);
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-dim);
+      flex-grow: 1;
+      margin-bottom: 28px;
+    }
+    .fp-read-more {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.2s;
+    }
+    .fp-read-more::after {
+      content: '→';
+      transition: transform 0.2s;
+    }
+    .featured-post:hover .fp-read-more::after { transform: translateX(4px); }
+
+    /* ─── POST GRID ──────────────────────────────────────── */
+    .posts-column {}
+
+    .posts-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .post-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 32px 30px;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      cursor: none;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .post-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px; width: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      transition: width 0.4s ease;
+    }
+    .post-card:hover {
+      border-color: rgba(0,229,255,0.25);
+      background: rgba(0,229,255,0.02);
+    }
+    .post-card:hover::after { width: 100%; }
+    .post-card:hover .post-title { color: var(--cyan); }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .post-date {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+    .post-cat {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cyan-dim);
+      border: 1px solid rgba(0,229,255,0.15);
+      padding: 2px 8px;
+    }
+    .post-cat.mag {
+      color: var(--mag-dim);
+      border-color: rgba(212,0,255,0.2);
+    }
+    .post-cat.green {
+      color: var(--green);
+      border-color: rgba(0,255,136,0.2);
+      opacity: 0.8;
+    }
+    .post-title {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      line-height: 1.25;
+      color: #fff;
+      margin-bottom: 10px;
+      transition: color 0.2s;
+    }
+    .post-excerpt {
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+    .post-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .post-read-time {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+    .post-arrow {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--cyan-dim);
+      transition: transform 0.2s;
+    }
+    .post-card:hover .post-arrow { transform: translateX(4px); }
+
+    /* Placeholder state */
+    .post-card.placeholder {
+      border-style: dashed;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .post-card.placeholder .post-title { color: var(--text-dim); }
+
+    /* Load more */
+    .load-more-row {
+      margin-top: 16px;
+      text-align: center;
+    }
+    .btn {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 13px 28px;
+      border: 1px solid;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+    .btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      transform: translateX(-101%);
+      transition: transform 0.3s ease;
+    }
+    .btn:hover::before { transform: translateX(0); }
+    .btn span { position: relative; z-index: 1; }
+    .btn-secondary {
+      color: var(--cyan);
+      background: transparent;
+      border-color: rgba(0,229,255,0.3);
+    }
+    .btn-secondary::before { background: rgba(0,229,255,0.07); }
+    .btn-secondary:hover { border-color: var(--cyan); }
+
+    /* ─── SIDEBAR ────────────────────────────────────────── */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: sticky;
+      top: 88px;
+    }
+
+    .sidebar-block {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .sidebar-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .sidebar-block.cyan-top::before  { background: linear-gradient(90deg, var(--cyan), transparent); }
+    .sidebar-block.mag-top::before   { background: linear-gradient(90deg, var(--magenta), transparent); }
+    .sidebar-block.green-top::before { background: linear-gradient(90deg, var(--green), transparent); }
+
+    .sidebar-header {
+      padding: 18px 22px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar-header-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+    .sidebar-header-icon {
+      font-size: 10px;
+      color: var(--cyan-dim);
+    }
+    .sidebar-body { padding: 22px; }
+
+    /* About widget */
+    .sidebar-about-text {
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-dim);
+      margin-bottom: 18px;
+    }
+    .sidebar-about-name {
+      font-family: var(--display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan-dim);
+      margin-bottom: 4px;
+    }
+    .sidebar-about-role {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* Categories widget */
+    .cat-list { list-style: none; }
+    .cat-list li {
+      border-bottom: 1px solid var(--border);
+    }
+    .cat-list li:last-child { border-bottom: none; }
+    .cat-list a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 0;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+      cursor: none;
+    }
+    .cat-list a:hover { color: var(--cyan); }
+    .cat-count {
+      font-size: 10px;
+      color: var(--text-muted);
+      background: var(--deep);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+    }
+
+    /* Signal status widget */
+    .signal-rows { display: flex; flex-direction: column; gap: 12px; }
+    .signal-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .signal-row-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .signal-row-val {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--cyan-dim);
+    }
+    .signal-bar-wrap {
+      margin-top: 16px;
+      height: 2px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .signal-bar-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta));
+      animation: signal-scan 3s ease-in-out infinite;
+    }
+    @keyframes signal-scan {
+      0%   { left: 0; width: 0%; }
+      50%  { left: 0; width: 100%; }
+      51%  { left: 100%; width: 0%; }
+      100% { left: 0; width: 0%; }
+    }
+
+    /* Newsletter widget */
+    .newsletter-text {
+      font-family: var(--body);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-dim);
+      margin-bottom: 18px;
+    }
+    .newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .newsletter-input {
+      background: var(--deep);
+      border: 1px solid var(--border);
+      padding: 11px 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .newsletter-input::placeholder { color: var(--text-muted); }
+    .newsletter-input:focus { border-color: var(--cyan-dim); }
+    .newsletter-submit {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--cyan);
+      border: 1px solid var(--cyan);
+      padding: 11px 20px;
+      cursor: none;
+      transition: all 0.25s;
+      width: 100%;
+    }
+    .newsletter-submit:hover {
+      background: transparent;
+      color: var(--cyan);
+    }
+    .newsletter-note {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ─── SIGNAL STRIP ───────────────────────────────────── */
+    .signal-strip {
+      position: relative;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 13px 0;
+      background: rgba(6,13,20,0.8);
+    }
+    .signal-track {
+      display: flex;
+      gap: 64px;
+      animation: marquee 28s linear infinite;
+      white-space: nowrap;
+    }
+    .signal-item {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .signal-item::before { content: '◈'; color: var(--cyan); font-size: 8px; }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px;
+      background: var(--deep);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .footer-brand {
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
+    .footer-brand span {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-muted);
+      letter-spacing: 0.25em;
+      margin-top: 4px;
+    }
+    .footer-links { display: flex; gap: 32px; list-style: none; }
+    .footer-links a {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--cyan); }
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .footer-copy a { color: var(--cyan-dim); text-decoration: none; }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .blog-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .featured-post { grid-template-columns: 1fr; }
+      .fp-visual { min-height: 200px; }
+      .filter-controls { align-items: flex-start; }
+      .page-header-inner { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 680px) {
+      nav, .page-header, footer { padding-left: 24px; padding-right: 24px; }
+      .blog-layout { padding: 48px 24px; }
+      .nav-links { gap: 20px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .footer-copy { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ─── NAV ─────────────────────────────────────────────── -->
+  <nav>
+    <a href="index.html" class="nav-logo">Glitch in the Gospel</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── PAGE HEADER ──────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="page-header-grid"></div>
+    <div class="page-header-glow"></div>
+    <div class="page-header-inner">
+      <div class="page-header-left">
+        <div class="page-eyebrow">Incoming Signal</div>
+        <h1 class="page-title">
+          Trans-<br />
+          <span class="accent">missions</span>
+        </h1>
+        <p class="page-subtitle">Written dispatches from inside the pattern. Episode companions, deeper dives, and threads the algorithm won't surface.</p>
+      </div>
+
+      <div class="filter-controls">
+        <span class="filter-label">Filter by category</span>
+        <div class="filter-tags">
+          <button class="filter-tag active" data-filter="all">All</button>
+          <button class="filter-tag" data-filter="signal">Signal</button>
+          <button class="filter-tag" data-filter="history">History</button>
+          <button class="filter-tag" data-filter="framework">Framework</button>
+          <button class="filter-tag" data-filter="episode">Episode</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── SIGNAL STRIP ─────────────────────────────────────── -->
+  <div class="signal-strip">
+    <div class="signal-track">
+      <span class="signal-item">New transmissions loading</span>
+      <span class="signal-item">Pattern recognition in progress</span>
+      <span class="signal-item">Debug log active</span>
+      <span class="signal-item">Signal strength — maximum</span>
+      <span class="signal-item">Sixth day — winding down</span>
+      <span class="signal-item">Entropy spike — detected</span>
+      <span class="signal-item">The loop is not coincidence</span>
+      <span class="signal-item">Subscribe to stay inside the signal</span>
+      <!-- duplicate -->
+      <span class="signal-item">New transmissions loading</span>
+      <span class="signal-item">Pattern recognition in progress</span>
+      <span class="signal-item">Debug log active</span>
+      <span class="signal-item">Signal strength — maximum</span>
+      <span class="signal-item">Sixth day — winding down</span>
+      <span class="signal-item">Entropy spike — detected</span>
+      <span class="signal-item">The loop is not coincidence</span>
+      <span class="signal-item">Subscribe to stay inside the signal</span>
+    </div>
+  </div>
+
+  <!-- ─── BLOG LAYOUT ───────────────────────────────────────── -->
+  <div class="blog-layout">
+
+    <!-- ── MAIN COLUMN ───────────────────────────────────────── -->
+    <main>
+
+      <!-- Featured Post -->
+      <!-- ══════════════════════════════════════════════════════
+           FEATURED POST SLOT
+           Update href, fp-date, fp-cat, fp-title, fp-excerpt
+           with your first real post when ready.
+           ══════════════════════════════════════════════════════ -->
+      <a href="#" class="featured-post reveal">
+        <div class="fp-visual">
+          <div class="fp-grid"></div>
+          <div class="fp-glyph">S1</div>
+          <span class="fp-badge">Featured</span>
+        </div>
+        <div class="fp-content">
+          <div>
+            <div class="fp-meta">
+              <span class="fp-date">— / — / —</span>
+              <span class="fp-cat">Episode Companion</span>
+            </div>
+            <div class="fp-title">Wars &amp; Rumors of Wars — The Full Breakdown</div>
+            <div class="fp-excerpt">Everything that didn't fit in the runtime. The Purim timing, the Kharg Island geography, the full Persia-Israel loop going back 2,600 years — and what the acceleration tells us about where the system is right now.</div>
+          </div>
+          <span class="fp-read-more">Read Transmission</span>
+        </div>
+      </a>
+
+      <!-- Posts Grid -->
+      <!-- ══════════════════════════════════════════════════════
+           POST CARDS
+           Each .post-card is one blog post.
+           - Update href when posts go live
+           - Remove .placeholder class on live posts
+           - Update post-date, post-cat, post-title, post-excerpt
+           - Update post-read-time to actual read time
+           - Add data-category matching your filter buttons
+           The three placeholder cards below show the
+           structure — duplicate freely as you publish.
+           ══════════════════════════════════════════════════════ -->
+      <div class="posts-grid">
+
+        <!-- Live post template (no .placeholder, update href) -->
+        <a href="#" class="post-card reveal reveal-delay-1" data-category="signal">
+          <div class="post-meta">
+            <span class="post-date">— / — / —</span>
+            <span class="post-cat">Signal</span>
+          </div>
+          <div class="post-title">The Entropy Spike — What the Numbers Actually Say</div>
+          <div class="post-excerpt">Trust collapse, information velocity, institutional failure. This is what a system approaching a threshold looks like from the inside — and why it feels like everything is heavier than it used to be.</div>
+          <div class="post-footer">
+            <span class="post-read-time">— min read</span>
+            <span class="post-arrow">→</span>
+          </div>
+        </a>
+
+        <a href="#" class="post-card reveal reveal-delay-2" data-category="history">
+          <div class="post-meta">
+            <span class="post-date">— / — / —</span>
+            <span class="post-cat mag">History</span>
+          </div>
+          <div class="post-title">The Persia-Israel Loop — A 2,600-Year Timeline</div>
+          <div class="post-excerpt">From the book of Esther to the book of Daniel to the bombing of Kharg Island. The same geography. The same tension. The same outcome — cycling on a schedule most people have never been shown.</div>
+          <div class="post-footer">
+            <span class="post-read-time">— min read</span>
+            <span class="post-arrow">→</span>
+          </div>
+        </a>
+
+        <a href="#" class="post-card reveal reveal-delay-3" data-category="framework">
+          <div class="post-meta">
+            <span class="post-date">— / — / —</span>
+            <span class="post-cat green">Framework</span>
+          </div>
+          <div class="post-title">Reality as Source Code — The Framework Explained</div>
+          <div class="post-excerpt">Not in the sci-fi sense. In the structural sense. Rule-based. Consequence-driven. Designed with intention. Here's the full architecture behind The Sixth Day model — built for people who think in systems.</div>
+          <div class="post-footer">
+            <span class="post-read-time">— min read</span>
+            <span class="post-arrow">→</span>
+          </div>
+        </a>
+
+        <!-- Placeholder cards — remove when real posts go live -->
+        <div class="post-card placeholder reveal reveal-delay-4" data-category="episode">
+          <div class="post-meta">
+            <span class="post-date">Coming Soon</span>
+            <span class="post-cat">Episode</span>
+          </div>
+          <div class="post-title">S1E2 Companion — The NPC Problem</div>
+          <div class="post-excerpt">Companion piece for episode 2. Why most people can't hear the signal even when it's at full volume — and the neurological, cultural, and spiritual reasons for the static.</div>
+          <div class="post-footer">
+            <span class="post-read-time">Upcoming</span>
+            <span class="post-arrow">→</span>
+          </div>
+        </div>
+
+        <div class="post-card placeholder reveal" data-category="framework">
+          <div class="post-meta">
+            <span class="post-date">Coming Soon</span>
+            <span class="post-cat green">Framework</span>
+          </div>
+          <div class="post-title">The Millennial Day Theory — A Plain-Language Guide</div>
+          <div class="post-excerpt">Six thousand years of human history mapped against six days of creation. What it means, where it comes from, and why it changes the way you read every headline you've seen this year.</div>
+          <div class="post-footer">
+            <span class="post-read-time">Upcoming</span>
+            <span class="post-arrow">→</span>
+          </div>
+        </div>
+
+        <div class="post-card placeholder reveal reveal-delay-1" data-category="signal">
+          <div class="post-meta">
+            <span class="post-date">Coming Soon</span>
+            <span class="post-cat">Signal</span>
+          </div>
+          <div class="post-title">The Hill — Consciousness, Prayer, and Altitude</div>
+          <div class="post-excerpt">What Ky Dickens found. What King David described. What happens when you climb high enough in your own interior life to see the pattern from above the noise. A deep dive on signal access.</div>
+          <div class="post-footer">
+            <span class="post-read-time">Upcoming</span>
+            <span class="post-arrow">→</span>
+          </div>
+        </div>
+
+      </div><!-- /posts-grid -->
+
+      <div class="load-more-row reveal">
+        <a href="#" class="btn btn-secondary">
+          <span>Load More Transmissions</span>
+        </a>
+      </div>
+
+    </main>
+
+    <!-- ── SIDEBAR ─────────────────────────────────────────── -->
+    <aside class="sidebar">
+
+      <!-- About widget -->
+      <div class="sidebar-block cyan-top reveal">
+        <div class="sidebar-header">
+          <span class="sidebar-header-icon">◈</span>
+          <span class="sidebar-header-title">The Operator</span>
+        </div>
+        <div class="sidebar-body">
+          <div class="sidebar-about-text">Written transmissions from Z.W. Speegle — author of <em>The End of the Sixth Day</em> and host of Glitch in the Gospel. Theology, simulation theory, and the patterns hiding in plain sight.</div>
+          <div class="sidebar-about-name">Z.W. Speegle</div>
+          <div class="sidebar-about-role">Author / Host</div>
+        </div>
+      </div>
+
+      <!-- Signal Status -->
+      <div class="sidebar-block mag-top reveal reveal-delay-1">
+        <div class="sidebar-header">
+          <span class="sidebar-header-icon">◈</span>
+          <span class="sidebar-header-title">Signal Status</span>
+        </div>
+        <div class="sidebar-body">
+          <div class="signal-rows">
+            <div class="signal-row">
+              <span class="signal-row-label">Series</span>
+              <span class="signal-row-val">Season 1 — Active</span>
+            </div>
+            <div class="signal-row">
+              <span class="signal-row-label">Latest Ep</span>
+              <span class="signal-row-val">S1E1 — Live</span>
+            </div>
+            <div class="signal-row">
+              <span class="signal-row-label">Next Ep</span>
+              <span class="signal-row-val">S1E2 — Soon</span>
+            </div>
+            <div class="signal-row">
+              <span class="signal-row-label">Book</span>
+              <span class="signal-row-val">Link Coming</span>
+            </div>
+          </div>
+          <div class="signal-bar-wrap">
+            <div class="signal-bar-fill" style="width:60%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="sidebar-block cyan-top reveal reveal-delay-2">
+        <div class="sidebar-header">
+          <span class="sidebar-header-icon">◈</span>
+          <span class="sidebar-header-title">Categories</span>
+        </div>
+        <div class="sidebar-body">
+          <ul class="cat-list">
+            <li>
+              <a href="#" data-sidebar-filter="all">
+                All Transmissions
+                <span class="cat-count">6</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" data-sidebar-filter="signal">
+                Signal
+                <span class="cat-count">2</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" data-sidebar-filter="history">
+                History
+                <span class="cat-count">1</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" data-sidebar-filter="framework">
+                Framework
+                <span class="cat-count">2</span>
+              </a>
+            </li>
+            <li>
+              <a href="#" data-sidebar-filter="episode">
+                Episode Companion
+                <span class="cat-count">1</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Newsletter / Notify -->
+      <div class="sidebar-block green-top reveal reveal-delay-3">
+        <div class="sidebar-header">
+          <span class="sidebar-header-icon">◈</span>
+          <span class="sidebar-header-title">Stay In Signal</span>
+        </div>
+        <div class="sidebar-body">
+          <div class="newsletter-text">New transmissions, episode drops, and book release updates — straight to your inbox. No noise.</div>
+          <div class="newsletter-form">
+            <input class="newsletter-input" type="email" placeholder="your@email.com" />
+            <button class="newsletter-submit">Subscribe</button>
+            <span class="newsletter-note">No spam. Unsubscribe anytime.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- YouTube -->
+      <div class="sidebar-block cyan-top reveal reveal-delay-4">
+        <div class="sidebar-header">
+          <span class="sidebar-header-icon">◈</span>
+          <span class="sidebar-header-title">Watch</span>
+        </div>
+        <div class="sidebar-body" style="padding-bottom:20px;">
+          <div class="newsletter-text" style="margin-bottom:14px;">The full series on YouTube. Subscribe to stay locked in as new episodes drop.</div>
+          <a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener"
+             style="display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--cyan-dim);text-decoration:none;transition:color 0.2s;"
+             onmouseenter="this.style.color='var(--cyan)'" onmouseleave="this.style.color='var(--cyan-dim)'">
+            <svg width="18" height="13" viewBox="0 0 24 17" fill="currentColor">
+              <path d="M23.5 2.7A3 3 0 0 0 21.4.6C19.5 0 12 0 12 0S4.5 0 2.6.6A3 3 0 0 0 .5 2.7C0 4.6 0 8.5 0 8.5s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1C4.5 17 12 17 12 17s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 12.4 24 8.5 24 8.5s0-3.9-.5-5.8z"/>
+              <polygon fill="var(--panel)" points="9.5,12.5 9.5,4.5 16,8.5"/>
+            </svg>
+            @GlitchintheGospel →
+          </a>
+        </div>
+      </div>
+
+    </aside>
+  </div><!-- /blog-layout -->
+
+  <!-- ─── FOOTER ────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        Glitch in the Gospel
+        <span>Z.W. Speegle — The Signal is Real</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="https://www.youtube.com/@GlitchintheGospel" target="_blank" rel="noopener">YouTube</a></li>
+      </ul>
+      <div class="footer-copy">
+        &copy; 2025 Z.W. Speegle<br />
+        <a href="mailto:glitchinthegospel@gmail.com">glitchinthegospel@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── SCRIPTS ───────────────────────────────────────────── -->
+  <script>
+    // Cursor
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function animateCursor() {
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animateCursor);
+    })();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+        cursor.style.background = 'var(--magenta)';
+        ring.style.borderColor = 'rgba(212,0,255,0.5)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+        cursor.style.background = 'var(--cyan)';
+        ring.style.borderColor = 'rgba(0,229,255,0.4)';
+      });
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Category filter
+    function applyFilter(cat) {
+      // Update header filter buttons
+      document.querySelectorAll('.filter-tag').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === cat);
+      });
+      // Show / hide post cards
+      document.querySelectorAll('.post-card[data-category]').forEach(card => {
+        const show = cat === 'all' || card.dataset.category === cat;
+        card.style.display = show ? 'block' : 'none';
+      });
+    }
+
+    document.querySelectorAll('.filter-tag').forEach(btn => {
+      btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+    });
+    document.querySelectorAll('[data-sidebar-filter]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        applyFilter(link.dataset.sidebarFilter);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    // Newsletter stub
+    document.querySelector('.newsletter-submit').addEventListener('click', () => {
+      const input = document.querySelector('.newsletter-input');
+      if (input.value && input.value.includes('@')) {
+        input.value = '';
+        input.placeholder = 'Signal received. ✓';
+        document.querySelector('.newsletter-submit').textContent = 'Subscribed';
+        document.querySelector('.newsletter-submit').style.background = 'var(--green)';
+        document.querySelector('.newsletter-submit').style.borderColor = 'var(--green)';
+        document.querySelector('.newsletter-submit').style.color = 'var(--black)';
+      }
+    });
+  </script>
+</body>
+</html>
